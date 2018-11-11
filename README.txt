@@ -1,2 +1,3 @@
-1 Создание репозитория
-2 Создание проекта визуализации погоды с различных ресурсов
+1 Create Git repository
+2 Understanding a few simple git-command
+3 Creating simple servise for wisualisation weather in current region
