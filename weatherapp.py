@@ -20,18 +20,22 @@ soup = BeautifulSoup(response.content, "html.parser")
 
 temprege = soup.find('span', 'large-temp')
 place = soup.find('span', 'current-city')
-print('The temprege in {} is {}'.format(place.text[:place.text.find(',')], temprege.text))
+print('The temprege in {} is {}'.format(place.text[:place.text.find(',')], temprege.text), 'from accuweather.com')
 
 # the task # 4
 cond = soup.find('span', 'cond')
-print('The weather is {}'.format(cond.text))
+print('The weather is {}'.format(cond.text), 'from accuweather.com')
 
-# the task # 5
-url = 'http://example.webscraping.com/'
-response = requests.get(url)
-soup1 = BeautifulSoup(response.content, "html.parser")
+# weather from , 'rp5.ua'
+url = 'http://rp5.ua/%D0%9F%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0_%D0%B2_%D0%9A%D0%B8%D1%94%D0%B2%D1%96'
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.content, "html.parser")
+body = soup.find(id='FheaderContent')
 
-countries = soup1.find('table').find_all('img')
-print('The contries on the first page is:')
-for i in countries:
-    print(i.next)
+temprege = body.find(id='ArchTemp').find(class_='t_0')
+place = body.find(id='pointNavi')
+print('The temprege in {} is {}'.format(place.text[place.text.rfind(' ') - 1:], temprege.text), 'from rp5.ua')
+
+cond = soup.find(id='forecastShort-content').find(class_='second-part').previous
+
+print('The weather is {}'.format(cond.lstrip(' ')), 'from accuweather.com')
