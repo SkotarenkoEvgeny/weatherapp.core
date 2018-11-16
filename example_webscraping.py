@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
+'''
+scraping http://example.webscraping.com
+'''
+
 url = 'http://example.webscraping.com'
 country_list = dict()
 headers = {
@@ -9,6 +13,11 @@ headers = {
 
 
 def find_all_countries(country_list, page_url=''):
+    '''
+    :param country_list:
+    :param page_url:
+    :return: country sictionary with links
+    '''
     response = requests.get(url + page_url, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
     pages_list = soup.find(id='pagination').find_all('a')
@@ -35,6 +44,11 @@ question = input('Input the name of country ')
 
 
 def country_information(question, country_list):
+    '''
+    :param question: Name of country
+    :param country_list:
+    :return: The country parametrs
+    '''
     print('The information abaut {} is:'.format(question))
     response = requests.get(url + country_list[question], headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
