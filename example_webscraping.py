@@ -17,6 +17,8 @@ def find_all_countries(country_list, page_url=''):
     :param country_list:
     :param page_url:
     :return: country sictionary with links
+    This funktion scraping http://example.webscraping.com and return a dictionary with name of countries and
+    links to countries informations
     '''
     response = requests.get(url + page_url, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -48,6 +50,7 @@ def country_information(question, country_list):
     :param question: Name of country
     :param country_list:
     :return: The country parametrs
+    This funktion search a country  and return country parameters
     '''
     print('The information abaut {} is:'.format(question))
     response = requests.get(url + country_list[question], headers=headers)
