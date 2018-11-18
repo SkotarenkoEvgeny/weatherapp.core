@@ -39,3 +39,19 @@ print('The temprege in {} is {}'.format(place.text[place.text.rfind(' ') - 1:], 
 cond = soup.find(id='forecastShort-content').find(class_='second-part').previous
 
 print('The weather is {}'.format(cond.lstrip(' ')), 'from accuweather.com')
+
+# weather from , 'https://sinoptik.ua/'
+
+url = 'https://sinoptik.ua/'
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.content, "html.parser")
+body = soup.find('body')
+
+temprege = body.find(class_='main loaded', id='bd1').find(class_='temperature').find(class_='min').span.text
+place = body.find(class_='isMain').next.next.next.next
+
+print('The temprege in {} is {}'.format(place[3:len(place)-2], temprege), 'from sinoptik.ua')
+
+cond = body.find(class_='main loaded', id='bd1').find(class_='weatherIco d200')
+
+print('The weather is {}'.format(cond['title'].lower()), 'from sinoptik.ua')
