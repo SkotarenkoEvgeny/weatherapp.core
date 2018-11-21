@@ -52,6 +52,6 @@ place = body.find(class_='isMain').next.next.next.next
 
 print('The temprege in {} is {}'.format(place[3:len(place)-2], temprege), 'from sinoptik.ua')
 
-cond = body.find(class_='main loaded', id='bd1').find(class_='weatherIco d200')
+cond = body.find(class_='main loaded', id='bd1').find(class_='weatherIco')
 
 print('The weather is {}'.format(cond['title'].lower()), 'from sinoptik.ua')
