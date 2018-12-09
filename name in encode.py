@@ -1,11 +1,11 @@
 #printing name in encode
 
-name = input('Input your name ')
-#name = 'Тарас'
+#name = input('Input your name ')
+name = 'http://rp5.ua/РџРѕРіРѕРґР°_РІ_СЃРІС–С‚С–'
 name_encode = name.encode('utf-8')
 print('Unicode\n')
-print(name_encode, "\n")
-
+print('Encode', name_encode, "\n")
+print('Decode', name_encode.decode('utf-8'))
 
 '''
 Написати програму для перетворення імені користувача у unicode code points
