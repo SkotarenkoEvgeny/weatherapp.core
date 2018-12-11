@@ -192,7 +192,7 @@ def rp5_parser():
     :return: site_name, temprege, place, cond from rp5
     '''
     site_name = 'rp5.ua'
-    url = 'http://rp5.ua/%D0%9F%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0_%D0%B2_%D0%9A%D0%B8%D1%94%D0%B2%D1%96'
+    url = read_settings(site_name)[0]
     body = site_request(url)
     temprege = body.find('span', 't_0').text
     place = body.find('div', {'id': 'pointNavi'}).text
