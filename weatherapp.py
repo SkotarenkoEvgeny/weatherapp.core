@@ -100,18 +100,18 @@ def change_settings(site_name, current_location_url, curent_location, site_searc
     :return:  save change site settings to settings.ini
     '''
     config = ConfigParser()
-    config.read('settings.ini')
+    config.read('settings.ini', encoding='utf8')
     if site_name in config.sections():
         config.set(site_name, 'current_location_url', current_location_url)
         config.set(site_name, 'current_location', curent_location)
-        with open('settings.ini', 'w') as config_file:
+        with open('settings.ini', 'w', encoding='utf8') as config_file:
             config.write(config_file)
     else:
         config.add_section(site_name)
         config.set(site_name, 'current_location_url', current_location_url)
         config.set(site_name, 'current_location', curent_location)
         config.set(site_name, 'search', site_search)
-        with open('settings.ini', 'w') as config_file:
+        with open('settings.ini', 'w', encoding='utf8') as config_file:
             config.write(config_file)
 
 
@@ -122,7 +122,7 @@ def read_settings(site_name):
     '''
     response = list()
     config = ConfigParser()
-    config.read('settings.ini')
+    config.read('settings.ini', encoding='utf8')
     for j in config.items(site_name):
         response.append(j[1])
     return response
