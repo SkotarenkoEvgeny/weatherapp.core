@@ -1,7 +1,8 @@
 import sys, os
 import requests
 import argparse
-import datetime
+import time
+import hashlib
 
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
@@ -10,7 +11,7 @@ from configparser import ConfigParser
 def site_request(url):
     '''
     :param url:
-    :return: page data from url
+    :return: data from site
     '''
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
@@ -18,10 +19,93 @@ def site_request(url):
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        return BeautifulSoup(response.content, "html.parser")
+        return response.content
     except requests.exceptions.RequestException as err:
         print(err)
         sys.exit(1)
+
+
+
+def BS_converter (raw_data):
+    '''
+    :param url:
+    :return: page data from url
+    '''
+    raw_data = BeautifulSoup(raw_data, "html.parser")
+    return raw_data
+
+
+def cache_file_name(url):
+    '''
+    create cache_file_name
+    :param url:
+    :return:
+    '''
+    return os.path.join('Cache_folder/', hashlib.md5(url.encode('utf-8')).hexdigest() + '.txt')
+
+
+def cache_chose(url):
+    '''
+    chose create or reed cache
+    :return: cache_data
+    '''
+    if 'Cache_folder' not in os.listdir():
+        os.mkdir('Cache_folder')
+    file_name = cache_file_name(url)
+    if os.path.exists(file_name) and time.time() - os.stat(file_name).st_mtime < 60:
+        raw_data = read_cache(url, file_name)
+        print('Data from file')
+    else:
+        write_cache(url, file_name)
+        raw_data = read_cache(url, file_name)
+        print('Data from site')
+    site_data = BS_converter(raw_data)
+    return site_data
+
+
+def read_cache(url, file_name):
+    '''
+    read_cache
+    :param url:
+    :return:
+    '''
+    with open(file_name, 'r', encoding='utf-8') as f:
+        site_data = f.read()
+    return site_data
+
+
+def refresh_cache():
+    '''
+    remove and refresh cache
+    :return:
+    '''
+    #remove_cache()
+    for key in site_functions.keys():
+        url = read_settings(key)[0]
+        cache_chose(url)
+
+def remove_cache():
+    '''
+    remove and refresh cache
+    :return:
+    '''
+    for file in os.listdir('Cache_folder'):
+        os.remove(os.path.join('Cache_folder', file))
+
+
+def write_cache(url, file_name):
+    '''
+    save data in cache_file
+    :param url:
+    :param site_data:
+    :return:
+    '''
+    try:
+        with open(file_name, 'w+', encoding='utf-8') as f:
+            data = site_request(url)
+            f.write(data.decode('utf-8'))
+    except IOError:
+        print("An IOError has occurred!")
 
 
 def display_data_weather(data_weather):
@@ -57,7 +141,7 @@ def save_data_to_file(data_weather):
     file_name = os.path.join('Data_weather/', site_name + str(datetime.date.today()) + '.txt')
     try:
         with open(file_name, 'w+', encoding='utf-8') as f:
-            f.write(str(datetime.date.today()) + '\n')
+            f.write(str(datetime.date.today()) + '\n') #correct
             for i in range(1, len(data_weather)):
                 f.write(str(data_weather[i]) + '\n')
     except IOError:
@@ -129,7 +213,7 @@ def read_settings(site_name):
 
 
 def chose_place(site_name):
-    site_data = read_settings(site_name) # recive place url and search url from settings.ini
+    site_data = read_settings(site_name)  # recive place url and search url from settings.ini
     while True:
         print('Current plase for weather view is {}'.format(site_data[1]))
         chose = input('if you wont change plase - input "yes", else - "no"').lower()
@@ -148,13 +232,14 @@ def place_settings():
     for site_name in site_functions.keys():
         print('The site {} have installed place {}'.format(site_name, read_settings(site_name)[1]))
 
+
 def accuweather_parser():
     '''
     :return: site_name, temprege, place, cond from accuweather
     '''
     site_name = 'accuweather.com'
     url = read_settings(site_name)[0]
-    body = site_request(url)
+    body = cache_chose(url)
     temprege = body.find('span', 'large-temp').text
     place = body.find('span', 'current-city').text
     cond = body.find('span', 'cond').text
@@ -166,8 +251,9 @@ def accuweather_temperege_per_hour():
     Data from accuweather.com
     :return: list[site_name, mit temperage, max temperage, average temperage]
     '''
-    url = 'https://www.accuweather.com/uk/ua/kyiv/324505/hourly-weather-forecast/324505'
-    body = site_request(url)
+    site_name = 'accuweather.com'
+    url = read_settings(site_name)[0]
+    body = cache_chose(url)
     temp = body.find(class_="hourly-table overview-hourly").table.tbody.tr
     raw_temprege_data = [int(i.text.replace('\n', '').replace('°', '')) for i in temp.find_all('td')]
     return ['accuweather.com', min(raw_temprege_data), max(raw_temprege_data),
@@ -179,7 +265,8 @@ def accuweather_links_search(url):
     :param url: accuweather url
     :return: dictionary with data for chose place
     '''
-    body = site_request(url).find(id='panel-main')
+    raw_data = site_request(url)
+    body = BS_converter (raw_data).find(id='panel-main')
     data_links = body.find_all(class_="drilldown cl")
     list_links = {}
     for info in data_links:
@@ -193,7 +280,7 @@ def rp5_parser():
     '''
     site_name = 'rp5.ua'
     url = read_settings(site_name)[0]
-    body = site_request(url)
+    body = cache_chose(url)
     temprege = body.find('span', 't_0').text
     place = body.find('div', {'id': 'pointNavi'}).text
     cond = body.find(id='forecastShort-content').find(class_='second-part').previous.lstrip(' ')[:-2]
@@ -204,7 +291,7 @@ def rp5_links_search(url):
     body = site_request(url).find(class_='countryMap')
     if body != None:
         raw_data = body.findAll(class_='country_map_links')
-        data ={}
+        data = {}
         if raw_data != []:
             for i in raw_data:
                 data[i.b.text[:-1]] = 'http://rp5.ua' + i.b.a['href']
@@ -223,7 +310,7 @@ def sinoptik_parser():
     '''
     site_name = 'sinoptik.ua/'
     url = 'https://sinoptik.ua/'
-    body = site_request(url)
+    body = cache_chose(url)
     temprege = body.find(class_='main loaded', id='bd1').find(class_='temperature').find(class_='min').span.text
     place = body.find(class_='isMain').next.next.next.next
     place = place[3:len(place) - 2]
@@ -231,21 +318,22 @@ def sinoptik_parser():
     return (site_name, temprege, place, cond)
 
 
-
 site_functions = {'accuweather.com': accuweather_parser,
-                    'rp5.ua': rp5_parser,
+                  'rp5.ua': rp5_parser}
+site_change_place = {'accuweather.com': accuweather_links_search,
+                     'rp5.ua': rp5_links_search}
+
+'''
+site_functions = {'accuweather.com': accuweather_parser,
+                  'rp5.ua': rp5_parser,
                   'sinoptik.ua': sinoptik_parser}
 site_change_place = {'accuweather.com': accuweather_links_search,
-                    'rp5.ua': rp5_links_search,
-                  'sinoptik.ua': ''}
-
+                     'rp5.ua': rp5_links_search,
+                     'sinoptik.ua': ''}
 '''
-site_functions = {'accuweather.com': (accuweather_parser, accuweather_links_search,
-                             accuweather_temperege_per_hour),
-                    'rp5.ua': (rp5_parser),
-                  'sinoptik.ua': (sinoptik_parser)}
-'''
-
+#display_data_weather(site_functions['accuweather.com']())
+#refresh_cache()
+#remove_cache()
 
 if __name__ == '__main__':
 
@@ -263,7 +351,10 @@ if __name__ == '__main__':
         else:
             print('Not correct data')
 
+
     parser = argparse.ArgumentParser(description='returt weather information from chosen site')
+    parser.add_argument('-rf', '--refresh', action='store_true', help='Refresh cach file')
+    parser.add_argument('-rm', '--remove', action='store_true', help='Clear cach file')
     parser.add_argument('-sitename', help=str(site_functions.keys()), nargs=1, type=str)
     parser.add_argument('-temp_hour', help='Temprege per hour', nargs=1, type=str)
     parser.add_argument('-s', '--save', help='Save data from {sitename} to file', nargs=1, type=str)
@@ -275,10 +366,16 @@ if __name__ == '__main__':
         display_temperege_data_per_hour(temprege_per_hour[args.temp_hour[0]]())
     if args.save != None:
         save_data_to_file(site_functions[args.save[0]]())
+    if args.refresh != False:
+        refresh_cache()
+    if args.remove != False:
+        remove_cache()
     # python weatherapp.py -sitename rp5.ua
-    # python weatherapp.py -sitename sinoptik.ua
+    # python weatherapp.py -sitename sinoptik.ua    #
     # python weatherapp.py -temp_hour accuweather.com
     # python weatherapp.py -sitename accuweather.com
 
     # python weatherapp.py -s accuweather.com
     # python weatherapp.py --save rp5.ua
+    # python weatherapp.py -rm
+    # python weatherapp.py -rf
