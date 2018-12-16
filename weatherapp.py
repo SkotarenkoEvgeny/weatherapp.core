@@ -25,8 +25,7 @@ def site_request(url):
         sys.exit(1)
 
 
-
-def BS_converter (raw_data):
+def BS_converter(raw_data):
     '''
     :param url:
     :return: page data from url
@@ -79,10 +78,11 @@ def refresh_cache():
     remove and refresh cache
     :return:
     '''
-    #remove_cache()
+    # remove_cache()
     for key in site_functions.keys():
         url = read_settings(key)[0]
         cache_chose(url)
+
 
 def remove_cache():
     '''
@@ -141,7 +141,7 @@ def save_data_to_file(data_weather):
     file_name = os.path.join('Data_weather/', site_name + str(datetime.date.today()) + '.txt')
     try:
         with open(file_name, 'w+', encoding='utf-8') as f:
-            f.write(str(datetime.date.today()) + '\n') #correct
+            f.write(str(datetime.date.today()) + '\n')  # correct
             for i in range(1, len(data_weather)):
                 f.write(str(data_weather[i]) + '\n')
     except IOError:
@@ -266,7 +266,7 @@ def accuweather_links_search(url):
     :return: dictionary with data for chose place
     '''
     raw_data = site_request(url)
-    body = BS_converter (raw_data).find(id='panel-main')
+    body = BS_converter(raw_data).find(id='panel-main')
     data_links = body.find_all(class_="drilldown cl")
     list_links = {}
     for info in data_links:
@@ -331,9 +331,9 @@ site_change_place = {'accuweather.com': accuweather_links_search,
                      'rp5.ua': rp5_links_search,
                      'sinoptik.ua': ''}
 '''
-#display_data_weather(site_functions['accuweather.com']())
-#refresh_cache()
-#remove_cache()
+# display_data_weather(site_functions['accuweather.com']())
+# refresh_cache()
+# remove_cache()
 
 if __name__ == '__main__':
 
@@ -350,7 +350,6 @@ if __name__ == '__main__':
             chose_place(site_name)
         else:
             print('Not correct data')
-
 
     parser = argparse.ArgumentParser(description='returt weather information from chosen site')
     parser.add_argument('-rf', '--refresh', action='store_true', help='Refresh cach file')
