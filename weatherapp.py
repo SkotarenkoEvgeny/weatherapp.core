@@ -173,6 +173,18 @@ def search_place(links_search, url):
             print('Not correct place')
             continue
 
+def chose_place(site_name):
+    site_data = read_settings(site_name)  # recive place url and search url from settings.ini
+    while True:
+        print('Current plase for weather view is {}'.format(site_data[1]))
+        chose = input('if you wont change plase - input "yes", else - "no"').lower()
+        if chose == 'yes':
+            search_data = search_place(site_change_place[site_name], site_data[2])
+            change_settings(site_name, search_data[0], search_data[1], site_search='')
+            return read_settings(site_name)
+        elif chose == 'no':
+            return site_data
+
 
 def change_settings(site_name, current_location_url, curent_location, site_search=''):
     '''
@@ -210,19 +222,6 @@ def read_settings(site_name):
     for j in config.items(site_name):
         response.append(j[1])
     return response
-
-
-def chose_place(site_name):
-    site_data = read_settings(site_name)  # recive place url and search url from settings.ini
-    while True:
-        print('Current plase for weather view is {}'.format(site_data[1]))
-        chose = input('if you wont change plase - input "yes", else - "no"').lower()
-        if chose == 'yes':
-            search_data = search_place(site_change_place[site_name], site_data[2])
-            change_settings(site_name, search_data[0], search_data[1], site_search='')
-            return read_settings(site_name)
-        elif chose == 'no':
-            return site_data
 
 
 def place_settings():
@@ -288,7 +287,8 @@ def rp5_parser():
 
 
 def rp5_links_search(url):
-    body = site_request(url).find(class_='countryMap')
+    raw_data = site_request(url)
+    body = BS_converter(raw_data).find(class_='countryMap')
     if body != None:
         raw_data = body.findAll(class_='country_map_links')
         data = {}
