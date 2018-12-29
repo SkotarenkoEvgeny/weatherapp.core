@@ -54,16 +54,10 @@ class App:
             for name, provider in self.providermanager._providers.items():
                 provider.run()
 
-
-
-
         elif command_name in self.providermanager:
             # run specific provider
+            print(command_name)
             provider = self.providermanager[command_name]
-            provider_obj = provider()
-            # self.produce_output(provider_obj.title,
-            #                         provider_obj.location,
-            #                         provider.run())
             provider.run()
 
 
