@@ -6,7 +6,6 @@ import hashlib
 
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
-from configparser import ConfigParser
 
 import config
 
@@ -23,7 +22,8 @@ class Weather_settings:
         self.site_name = site_name
         self.site_data = self.read_settings(site_name)
 
-    def change_settings(self, current_location_url, curent_location, site_search=''):
+    def change_settings(self, current_location_url, curent_location,
+                        site_search=''):
         '''
         :param site_name:,
         :param current_location_url:
@@ -35,13 +35,15 @@ class Weather_settings:
         config = ConfigParser()
         config.read('settings.ini', encoding='utf8')
         if self.site_name in config.sections():
-            config.set(self.site_name, 'current_location_url', current_location_url)
+            config.set(self.site_name, 'current_location_url',
+                       current_location_url)
             config.set(self.site_name, 'current_location', curent_location)
             with open('settings.ini', 'w', encoding='utf8') as config_file:
                 config.write(config_file)
         else:
             config.add_section(self.site_name)
-            config.set(self.site_name, 'current_location_url', current_location_url)
+            config.set(self.site_name, 'current_location_url',
+                       current_location_url)
             config.set(self.site_name, 'current_location', curent_location)
             config.set(self.site_name, 'search', site_search)
             with open('settings.ini', 'w', encoding='utf8') as config_file:
@@ -87,8 +89,10 @@ class Weather_settings:
 
     def chose_place(self):
         while True:
-            print('Current plase for weather view is {}'.format(self.site_data[1]))
-            chose = input('if you wont change plase - input "yes", else - "no"').lower()
+            print('Current plase for weather view is {}'.format(
+                self.site_data[1]))
+            chose = input(
+                'if you wont change plase - input "yes", else - "no"').lower()
             if chose == 'yes':
                 search_data = self.search_place()
                 self.change_settings(search_data[0], search_data[1])
@@ -102,8 +106,10 @@ class Weather_settings:
         :param data_weather:
         :return: printing processed data
         '''
-        site_name, temprege, place, cond = data_weather[0], data_weather[1], data_weather[2], data_weather[3]
-        print('The temprege in {} is {}'.format(place, temprege), 'from ', site_name)
+        site_name, temprege, place, cond = data_weather[0], data_weather[1], \
+                                           data_weather[2], data_weather[3]
+        print('The temprege in {} is {}'.format(place, temprege), 'from ',
+              site_name)
         print('The weather is {}'.format(cond), 'from ', site_name)
 
     @staticmethod
@@ -112,10 +118,11 @@ class Weather_settings:
         :param temperege_data:
         :return: min max average temperage to display
         '''
-        print('From {} min temperege = {}, max temperege = {}, average temperege = {}'.format(temperege_data[0],
-                                                                                              temperege_data[1],
-                                                                                              temperege_data[2],
-                                                                                              temperege_data[3]))
+        print('From {} min temperege = {}, max temperege = {}, '
+              'average temperege = {}'.format(temperege_data[0],
+                                              temperege_data[1],
+                                              temperege_data[2],
+                                              temperege_data[3]))
 
     def bs_body_processor(self):
         '''
@@ -136,7 +143,9 @@ class Cache_controller:
 
     def __init__(self, url):
         self.url = url
-        self.cache_file_name = os.path.join('Cache_folder/', hashlib.md5(url.encode('utf-8')).hexdigest() + '.txt')
+        self.cache_file_name = os.path.join('Cache_folder/',
+                                            hashlib.md5(url.encode(
+                                                'utf-8')).hexdigest() + '.txt')
 
     def site_request(self):
         '''
@@ -164,7 +173,8 @@ class Cache_controller:
         if web_data == None:
             raw_data = self.read_cache()
             print('Old Data from file')
-        elif os.path.exists(self.cache_file_name) and time.time() - os.stat(self.cache_file_name).st_mtime < 60:
+        elif os.path.exists(self.cache_file_name) and time.time() \
+                - os.stat(self.cache_file_name).st_mtime < 60:
             raw_data = self.read_cache()
             print('Data from file')
         else:
@@ -185,16 +195,18 @@ class Cache_controller:
             site_data = f.read()
         return site_data
 
+    @staticmethod
     def refresh_cache():
         '''
         remove and refresh cache
         :return:
         '''
         # remove_cache()
-        for key in site_functions.keys():  # переделать
-            url = read_settings(key)[0]
+        for key in config.sites:  # переделать
+            url = self.read_settings(key)
             cache_chose(url)
 
+    @staticmethod
     def remove_cache():
         '''
         remove and refresh cache
@@ -249,8 +261,10 @@ class AccuWeatherProvider(Weather_settings):
         '''
         body = body = self.bs_body_processor()
         temp = body.find(class_="hourly-table overview-hourly").table.tbody.tr
-        raw_temprege_data = [int(i.text.replace('\n', '').replace('°', '')) for i in temp.find_all('td')]
-        return ['accuweather.com', min(raw_temprege_data), max(raw_temprege_data),
+        raw_temprege_data = [int(i.text.replace('\n', '').replace('°', ''))
+                             for i in temp.find_all('td')]
+        return ['accuweather.com', min(raw_temprege_data),
+                max(raw_temprege_data),
                 sum(raw_temprege_data) / len(raw_temprege_data)]
 
     def links_search(self):
@@ -288,7 +302,8 @@ class RP5Provider(Weather_settings):
         body = body = self.bs_body_processor()
         temprege = body.find('span', 't_0').text
         place = body.find('div', {'id': 'pointNavi'}).text
-        cond = body.find(id='forecastShort-content').find(class_='second-part').previous.lstrip(' ')[:-2]
+        cond = body.find(id='forecastShort-content').find(class_='second-part')\
+                   .previous.lstrip(' ')[:-2]
         return (self.site_name, temprege, place, cond)
 
     def links_search(self):
@@ -317,6 +332,6 @@ site_change_place = {'accuweather.com': AccuWeatherProvider.links_search,
 site_functions = {'accuweather.com': AccuWeatherProvider.parser,
                   'rp5.ua': RP5Provider.rp5_parser}
 """
-# Aqu = AccuWeatherProvider()
-# Aqu.run()
-# print(Aqu)
+Aqu = AccuWeatherProvider()
+Aqu.run()
+print(Aqu)

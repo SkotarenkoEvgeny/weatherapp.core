@@ -5,3 +5,4 @@ headers = {
                       ' Chrome/70.0.3538.102 Safari/537.36'}
 
 
+sites = ['accuweather.com', 'rp5.ua']

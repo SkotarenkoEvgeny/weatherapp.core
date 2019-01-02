@@ -20,7 +20,10 @@ class App:
         '''
         for site_name in site_functions.keys():
             print(
-                'The site {} have installed place {}'.format(site_name, Weather_settings(site_name).read_settings()[1]))
+                'The site {} have installed place {}'.format(site_name,
+                                                             Weather_settings(
+                                                                 site_name).read_settings()[
+                                                                 1]))
         while True:
             place_settings()
             print('If you will change place for site - input "sitename"')
@@ -41,7 +44,8 @@ class App:
         '''
         arg_parser = ArgumentParser(add_help=False)
         arg_parser.add_argument('command', help='Command', nargs="?")
-        arg_parser.add_argument('--refresh', help='Bypass caches', action='store_true')
+        arg_parser.add_argument('--refresh', help='Bypass caches',
+                                action='store_true')
         return arg_parser
 
     def run(self, argv):
