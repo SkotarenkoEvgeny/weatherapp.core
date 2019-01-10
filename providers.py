@@ -83,9 +83,9 @@ class RP5Provider(Weather_settings):
                    .previous.lstrip(' ')[:-2]
         return (self.site_name, temprege, place, cond)
 
-    def links_search(self):
+    def links_search(self, url):
 
-        raw_data = Cache_controller(self).cache_chose()
+        raw_data = Cache_controller(url).cache_chose()
         body = BeautifulSoup(raw_data, "html.parser").find(class_='countryMap')
         if body != None:
             raw_data = body.findAll(class_='country_map_links')

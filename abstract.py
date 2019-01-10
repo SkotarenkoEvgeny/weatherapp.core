@@ -262,3 +262,28 @@ class Prowiders(Command):
     @staticmethod
     def providers():
         return sites
+
+
+class WeatherProvider(Configure):
+
+
+
+
+    @abc.abstractmethod
+    def parser(self):
+        '''
+        :return: site_name, temprege, place, cond from site_name
+        '''
+
+    @abc.abstractmethod
+    def links_search(self):
+        '''
+        :return:
+        '''
+
+    @abc.abstractmethod
+    def temperege_per_hour(self):
+        '''
+        Data from site_name
+        :return: list[site_name, mit temperage, max temperage, average temperage]
+        '''

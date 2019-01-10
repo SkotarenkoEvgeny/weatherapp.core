@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import sys
 
-import providers
+import providers, config, abstract
 from providermanager import ProviderManager
 
 
@@ -14,18 +14,21 @@ class App:
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
 
-    def place_settings():
+    def place_settings(self):
         '''
-        :return: information adaut current settings
+        information adaut current settings
+        :return: info abaut change settings
         '''
-        for site_name in site_functions.keys():
+        flag = False
+
+        for site_name in config.sites:
             print(
-                'The site {} have installed place {}'.format(site_name,
-                                                             Weather_settings(
+                'The site {} have installed place {}'.format(site_name, \
+                                                             self.providermanager.get(
                                                                  site_name).read_settings()[
                                                                  1]))
+
         while True:
-            place_settings()
             print('If you will change place for site - input "sitename"')
             print('If you will exit? input "exit"')
             site_name = input('If not need - input "No"')
@@ -33,10 +36,13 @@ class App:
                 break
             elif site_name.lower() == 'exit':
                 sys.exit(1)
-            elif site_name in site_functions:
-                Weather_settings(site_name).chose_place()
+            elif site_name in config.sites:
+                self.providermanager.get(site_name).chose_place()
+                flag = True
+                break
             else:
                 print('Not correct data')
+        return flag
 
     def _arg_parse(self):
         '''
@@ -46,6 +52,7 @@ class App:
         arg_parser.add_argument('command', help='Command', nargs="?")
         arg_parser.add_argument('--refresh', help='Bypass caches',
                                 action='store_true')
+
         return arg_parser
 
     def run(self, argv):
@@ -64,9 +71,11 @@ class App:
             provider = self.providermanager[command_name]
             provider.run()
 
+    def __del__(self):
+        print('Change settings. Restart search')
+
 
 """
-
     parser = argparse.ArgumentParser(description='returt weather information from chosen site')
     parser.add_argument('-rf', '--refresh', action='store_true', help='Refresh cach file')
     parser.add_argument('-rm', '--remove', action='store_true', help='Clear cach file')
@@ -74,7 +83,7 @@ class App:
     parser.add_argument('-temp_hour', help='Temprege per hour', nargs=1, type=str)
     parser.add_argument('-s', '--save', help='Save data from {sitename} to file', nargs=1, type=str)
     args = parser.parse_args()
-        
+
     if args.sitename != None:
         display_data_weather(site_functions[args.sitename[0]]())
     if args.temp_hour != None:
@@ -85,8 +94,8 @@ class App:
         refresh_cache()
     if args.remove != False:
         remove_cache()
-        
-        
+
+
 """
 
 
@@ -104,9 +113,15 @@ def main(argv=sys.argv[1:]):
     '''
     Main entry point
     '''
+    site_chose = App()
+    flag = site_chose.place_settings()
+    if flag == True:
+        del site_chose
+        site_chose = App()
 
-    return App().run(argv)
+    return site_chose.run(argv)
 
 
 if __name__ == "__main__":
+    main(sys.argv[1:])
     main(sys.argv[1:])
