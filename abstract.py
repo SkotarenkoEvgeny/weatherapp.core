@@ -254,3 +254,11 @@ class Cache_controller:
                 f.write(web_data.decode('utf-8'))
         except IOError:
             print("An IOError has occurred!")
+
+class Prowiders(Command):
+
+    sites = config.sites
+
+    @staticmethod
+    def providers():
+        return sites
