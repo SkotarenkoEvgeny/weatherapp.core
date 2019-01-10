@@ -24,9 +24,8 @@ class App:
         for site_name in config.sites:
             print(
                 'The site {} have installed place {}'.format(site_name, \
-                                                             self.providermanager.get(
-                                                                 site_name).read_settings()[
-                                                                 1]))
+                                                self.providermanager.get(
+                                                site_name).read_settings()[1]))
 
         while True:
             print('If you will change place for site - input "sitename"')
@@ -52,6 +51,7 @@ class App:
         arg_parser.add_argument('command', help='Command', nargs="?")
         arg_parser.add_argument('--refresh', help='Bypass caches',
                                 action='store_true')
+        arg_parser.add_argument('--debug', action='store_true')
 
         return arg_parser
 
@@ -67,12 +67,11 @@ class App:
 
         elif command_name in self.providermanager:
             # run specific provider
-            print(command_name)
             provider = self.providermanager[command_name]
             provider.run()
 
     def __del__(self):
-        print('Change settings. Restart search')
+        pass
 
 
 """
@@ -113,13 +112,22 @@ def main(argv=sys.argv[1:]):
     '''
     Main entry point
     '''
-    site_chose = App()
-    flag = site_chose.place_settings()
-    if flag == True:
-        del site_chose
+    try:
         site_chose = App()
+        flag = site_chose.place_settings()
+        if flag == True:
+            print('Change settings. Restart search')
+            del site_chose
+            site_chose = App()
 
-    return site_chose.run(argv)
+        return site_chose.run(argv)
+    except Exception as exc:
+        if '--debug' in argv:
+            print(exc)
+        else:
+            print("The programm can't work")
+            print(exc)
+            sys.exit()
 
 
 if __name__ == "__main__":

@@ -192,7 +192,7 @@ class Cache_controller:
             if response.status_code != 200:
                 return None
             return response.content
-        except requests.exceptions.RequestException as err:
+        except requests.exceptions.RequestException:
             return None
 
     def cache_chose(self):
