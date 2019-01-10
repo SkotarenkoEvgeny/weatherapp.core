@@ -76,12 +76,20 @@ class Configure(Command):
         :param site_name:
         :return: (search_url, place, current_location)
         '''
-        response = list()
-        config = ConfigParser()
-        config.read('settings.ini', encoding='utf8')
-        for j in config.items(self.site_name):
-            response.append(j[1])
-        return response
+        try:
+            response = list()
+            config = ConfigParser()
+            config.read('settings.ini', encoding='utf8')
+            for j in config.items(self.site_name):
+                response.append(j[1])
+            return response
+        except:
+            print('The settings file is broken. Settings is will be rewrite.')
+            with open('default_settings.ini', 'r') as defoult_file:
+                with open('settings.ini', 'w') as file:
+                    for line in defoult_file:
+                        file.write(line)
+            return self.read_settings()
 
     def search_place(self):
         '''
