@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import sys
+import logging
 
 import providers, config, abstract
 from providermanager import ProviderManager
@@ -9,6 +10,8 @@ class App:
     '''
     WeatherApp agregator
     '''
+
+    logger = logging.getLogger(__name__)
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
