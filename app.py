@@ -58,10 +58,28 @@ class App:
 
         return arg_parser
 
+    def configure_logging (self):
+        '''
+        Create logging handlers for any log output
+        '''
+        root_logger = logging.getLogger('')
+        root_logger.setLevel(logging.DEBUG)
+
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+
+        info_formater = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
+        console_handler.setFormatter(info_formater)
+
+        root_logger.addHandler(console_handler)
+
     def run(self, argv):
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
+        self.configure_logging()
 
         if not command_name:
             # run all weather providers by default
@@ -100,6 +118,7 @@ class App:
 
 """
 
+#import pdb; pdb.set_trace()
 
 # python weatherapp.py -sitename rp5.ua
 # python weatherapp.py -sitename sinoptik.ua    #
@@ -135,4 +154,4 @@ def main(argv=sys.argv[1:]):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    main(sys.argv[1:])
+
