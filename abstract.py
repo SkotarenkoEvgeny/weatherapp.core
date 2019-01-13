@@ -7,6 +7,7 @@ import sys, os
 import requests
 import time
 import hashlib
+import logging
 
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
@@ -84,6 +85,7 @@ class Configure(Command):
                 response.append(j[1])
             return response
         except:
+            logging.exception('settings file is broken')
             print('The settings file is broken. Settings is will be rewrite.')
             with open('default_settings.ini', 'r') as defoult_file:
                 with open('settings.ini', 'w') as file:
@@ -114,6 +116,7 @@ class Configure(Command):
                 else:
                     url = list_links[request_place]
             except KeyError:
+                logging.exception('Bad plase input')
                 print('Not correct place')
                 continue
 
@@ -193,6 +196,7 @@ class Cache_controller:
                 return None
             return response.content
         except requests.exceptions.RequestException:
+            logging.exception('Site response ', response.status_code)
             return None
 
     def cache_chose(self):
@@ -261,6 +265,7 @@ class Cache_controller:
             with open(self.cache_file_name, 'w+', encoding='utf-8') as f:
                 f.write(web_data.decode('utf-8'))
         except IOError:
+            logging.exception('Write cache exeption')
             print("An IOError has occurred!")
 
 class Prowiders(Command):
