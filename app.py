@@ -12,6 +12,9 @@ class App:
     '''
 
     logger = logging.getLogger(__name__)
+    LOG_LEVEL_MAP = {0: logging.WARNING,
+                     1: logging.INFO,
+                     2: logging.DEBUG}
 
     def __init__(self):
         self.arg_parser = self._arg_parse()
@@ -55,6 +58,11 @@ class App:
         arg_parser.add_argument('--refresh', help='Bypass caches',
                                 action='store_true')
         arg_parser.add_argument('--debug', action='store_true')
+        arg_parser.add_argument('-v', '--verbose',
+                                action='count',
+                                dest='verbose_level',
+                                default=0,
+                                help='Increase verbosity of output.')
 
         return arg_parser
 
@@ -63,10 +71,11 @@ class App:
         Create logging handlers for any log output
         '''
         root_logger = logging.getLogger('')
-        root_logger.setLevel(logging.DEBUG)
+        root_logger.setLevel(App.LOG_LEVEL_MAP[2])
 
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
+        console_handler.setLevel(App.LOG_LEVEL_MAP.get(self.options.verbose_level,
+                                                       App.LOG_LEVEL_MAP[0]))
 
         info_formater = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(name)s - %(message)s')

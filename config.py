@@ -6,3 +6,5 @@ headers = {
 
 
 sites = ['accuweather.com', 'rp5.ua']
+
+DEFAULT_VERBOSE_LEVEL = 0
