@@ -78,7 +78,7 @@ class App:
                                                        App.LOG_LEVEL_MAP[0]))
 
         info_formater = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+            '%(asctime)s - %(levelname)s - %(funcName)s - %(message)s')
 
         console_handler.setFormatter(info_formater)
 
@@ -153,6 +153,7 @@ def main(argv=sys.argv[1:]):
 
         return site_chose.run(argv)
     except Exception as exc:
+        logging.exception(exc)
         if '--debug' in argv:
             print(exc)
         else:

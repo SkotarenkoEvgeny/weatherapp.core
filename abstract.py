@@ -42,7 +42,7 @@ class Configure(Command):
     def __init__(self, site_name):
         super().__init__(site_name)
         Configure.call += 1
-        print('init Weather_settings', Configure.call)
+        logging.DEBUG('init Weather_settings', Configure.call)
         self.site_data = self.read_settings()
 
     def change_settings(self, current_location_url, curent_location,
@@ -214,11 +214,11 @@ class Cache_controller:
         elif os.path.exists(self.cache_file_name) and time.time() \
                 - os.stat(self.cache_file_name).st_mtime < 60:
             raw_data = self.read_cache()
-            print('Data from file')
+            logging.debug('Data from file')
         else:
             self.write_cache(web_data)
             raw_data = self.read_cache()
-            print('Data from site')
+            logging.debug('Data from site')
         site_data = raw_data
         # site_data = BS_converter(raw_data)
         return site_data
@@ -265,7 +265,7 @@ class Cache_controller:
             with open(self.cache_file_name, 'w+', encoding='utf-8') as f:
                 f.write(web_data.decode('utf-8'))
         except IOError:
-            logging.exception('Write cache exeption')
+            logging.exception('Write cache exeption, ')
             print("An IOError has occurred!")
 
 class Prowiders(Command):
