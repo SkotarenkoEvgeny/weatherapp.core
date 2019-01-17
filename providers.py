@@ -1,6 +1,8 @@
 '''
 The specific infirmation processing for each Provider
 '''
+import logging
+
 from bs4 import BeautifulSoup
 
 from abstract import Cache_controller
@@ -13,7 +15,7 @@ class AccuWeatherProvider(Weather_settings):
     def __init__(self):
         # (search_url, place, current_location)
         AccuWeatherProvider.call += 1
-        print('init Acu', AccuWeatherProvider.call)
+        logging.debug('init Acu', AccuWeatherProvider.call)
         self.site_name = 'accuweather.com'
         self.site_data = Weather_settings.read_settings(self)
 
@@ -64,7 +66,7 @@ class RP5Provider(Weather_settings):
     def __init__(self):
         # (search_url, place, current_location)
         RP5Provider.call += 1
-        print('init rp5', RP5Provider.call)
+        logging.debug('init rp5', RP5Provider.call)
         self.site_name = 'rp5.ua'
         self.site_data = Weather_settings.read_settings(self)
 

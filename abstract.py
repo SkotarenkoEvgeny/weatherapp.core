@@ -85,7 +85,7 @@ class Configure(Command):
                 response.append(j[1])
             return response
         except:
-            logging.exception('settings file is broken')
+            logging.exception('The settings file is broken')
             print('The settings file is broken. Settings is will be rewrite.')
             with open('default_settings.ini', 'r') as defoult_file:
                 with open('settings.ini', 'w') as file:
@@ -116,7 +116,7 @@ class Configure(Command):
                 else:
                     url = list_links[request_place]
             except KeyError:
-                logging.exception('Bad plase input')
+                logging.exception('Bad input the search place')
                 print('Not correct place')
                 continue
 
@@ -210,7 +210,7 @@ class Cache_controller:
         web_data = self.site_request()
         if web_data == None:
             raw_data = self.read_cache()
-            print('Old Data from file')
+            logging.debug('Old Data from file')
         elif os.path.exists(self.cache_file_name) and time.time() \
                 - os.stat(self.cache_file_name).st_mtime < 60:
             raw_data = self.read_cache()
@@ -265,7 +265,7 @@ class Cache_controller:
             with open(self.cache_file_name, 'w+', encoding='utf-8') as f:
                 f.write(web_data.decode('utf-8'))
         except IOError:
-            logging.exception('Write cache exeption, ')
+            logging.exception('Write cache exception, ')
             print("An IOError has occurred!")
 
 class Prowiders(Command):
