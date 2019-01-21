@@ -1,5 +1,4 @@
-# import abc
-# import argparse
+import abc
 import sys, os
 import requests
 import time
@@ -246,14 +245,6 @@ class Cache_controller:
         except IOError:
             logging.exception('Write cache exception, ')
             print("An IOError has occurred!")
-
-class Prowiders(Command):
-
-    sites = config.sites
-
-    @staticmethod
-    def providers():
-        return sites
 
 
 class WeatherProvider(Configure):
