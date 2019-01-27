@@ -14,7 +14,7 @@ class Command(abc.ABC):
         return parser
 
     @abc.abstractmethod
-    def run(self, argv):
+    def run(self):
         '''
         Invoced by application when the command is run
         '''

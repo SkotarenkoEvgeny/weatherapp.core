@@ -2,8 +2,8 @@ import logging
 
 from bs4 import BeautifulSoup
 
-from abstract import Cache_controller
-from abstract import WeatherProvider as Weather_settings
+from weatherapp.core.abstract import Cache_controller
+from weatherapp.core.abstract import WeatherProvider as Weather_settings
 
 
 class RP5Provider(Weather_settings):
@@ -14,11 +14,9 @@ class RP5Provider(Weather_settings):
         RP5Provider.call += 1
         logging.debug('init rp5', RP5Provider.call)
         self.site_name = 'rp5.ua'
+        super().__init__(self.site_name)
         self.site_data = Weather_settings.read_settings(self)
 
-    def run(self):
-        data_weather = self.parser()
-        self.display_data_weather(data_weather)
 
     def parser(self):
         '''
@@ -31,7 +29,7 @@ class RP5Provider(Weather_settings):
                    .previous.lstrip(' ')[:-2]
         return (self.site_name, temprege, place, cond)
 
-    def links_search(self, url):
+    def links_search(url):
 
         raw_data = Cache_controller(url).cache_chose()
         body = BeautifulSoup(raw_data, "html.parser").find(class_='countryMap')

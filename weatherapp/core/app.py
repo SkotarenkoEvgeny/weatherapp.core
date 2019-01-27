@@ -2,8 +2,10 @@ from argparse import ArgumentParser
 import sys
 import logging
 
-import providers, config, abstract
-from providermanager import ProviderManager
+from weatherapp.core import config
+
+
+from weatherapp.core.providermanager import ProviderManager
 
 
 class App:
@@ -29,7 +31,7 @@ class App:
 
         for site_name in config.sites:
             print(
-                'The site {} have installed place {}'.format(site_name, \
+                'The site {} have installed place {}'.format(site_name,
                                                 self.providermanager.get(
                                                 site_name).read_settings()[1]))
 

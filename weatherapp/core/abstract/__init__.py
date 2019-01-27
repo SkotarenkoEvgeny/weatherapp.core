@@ -4,4 +4,4 @@ from weatherapp.core.abstract.provider import WeatherProvider
 from weatherapp.core.abstract.provider import Cache_controller
 
 
-__all__ = ['Command', 'Manager', 'WeatherProvider', 'Cache_controller']
+__all__ = ['Manager', 'WeatherProvider', 'Cache_controller', 'Command']

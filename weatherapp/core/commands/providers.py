@@ -1,7 +1,7 @@
 from weatherapp.core.abstract import Command
+from weatherapp.core import config
 
-
-class Prowiders(Command):
+class Providers(Command):
 
     """
     Print all available providers.
@@ -11,8 +11,8 @@ class Prowiders(Command):
 
     @staticmethod
     def providers():
-        return sites
+        return Providers.sites
 
-    def run():
-        for name in sites:
+    def run(self):
+        for name in Providers.sites:
             print(name)

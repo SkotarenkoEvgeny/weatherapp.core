@@ -1,4 +1,4 @@
-from providers import RP5Provider, AccuWeatherProvider
+from weatherapp.core.providers import RP5Provider, AccuWeatherProvider
 
 class ProviderManager:
     '''

@@ -2,8 +2,8 @@ import logging
 
 from bs4 import BeautifulSoup
 
-from abstract import Cache_controller
-from abstract import WeatherProvider as Weather_settings
+from weatherapp.core.abstract import Cache_controller
+from weatherapp.core.abstract import WeatherProvider as Weather_settings
 
 
 class AccuWeatherProvider(Weather_settings):
@@ -14,11 +14,9 @@ class AccuWeatherProvider(Weather_settings):
         AccuWeatherProvider.call += 1
         logging.debug('init Acu', AccuWeatherProvider.call)
         self.site_name = 'accuweather.com'
+        super().__init__(self.site_name)
         self.site_data = Weather_settings.read_settings(self)
 
-    def run(self):
-        data_weather = self.parser()
-        self.display_data_weather(data_weather)
 
     def parser(self):
         '''
@@ -35,10 +33,24 @@ class AccuWeatherProvider(Weather_settings):
         Data from accuweather.com
         :return: list[site_name, mit temperage, max temperage, average temperage]
         '''
-        body = body = self.bs_body_processor()
+        body = self.bs_body_processor()
         temp = body.find(class_="hourly-table overview-hourly").table.tbody.tr
         raw_temprege_data = [int(i.text.replace('\n', '').replace('°', ''))
                              for i in temp.find_all('td')]
         return ['accuweather.com', min(raw_temprege_data),
                 max(raw_temprege_data),
                 sum(raw_temprege_data) / len(raw_temprege_data)]
+
+    def links_search(url):
+        '''
+        :param url: accuweather url
+        :return: dictionary with data for chose place
+        '''
+        raw_data = Cache_controller(url).cache_chose()
+        body = BeautifulSoup(raw_data, "html.parser").find(id='panel-main')
+        data_links = body.find_all(class_="drilldown cl")
+        list_links = {}
+        for info in data_links:
+            list_links[str(info.find('a').em.text)] = info.find('a')['href']
+        return list_links
+

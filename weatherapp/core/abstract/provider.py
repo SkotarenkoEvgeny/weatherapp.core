@@ -9,7 +9,7 @@ from configparser import ConfigParser
 from bs4 import BeautifulSoup
 
 from weatherapp.core import config
-from weatherapp.core.abstract.command import Command
+from weatherapp.core.abstract.сommand import Command
 
 class Configure(Command):
     '''
@@ -77,6 +77,7 @@ class Configure(Command):
         :param url:
         :return:
         '''
+        request_place = None
         url = self.site_data[2]
         while True:
             list_links = self.links_search(url)
@@ -168,8 +169,8 @@ class Cache_controller:
         :return: data from site
         '''
         headers = config.headers
+        response = requests.get(self.url, headers=headers)
         try:
-            response = requests.get(self.url, headers=headers)
             if response.status_code != 200:
                 return None
             return response.content
