@@ -9,7 +9,7 @@ from configparser import ConfigParser
 from bs4 import BeautifulSoup
 
 from weatherapp.core import config
-from weatherapp.core.abstract.сommand import Command
+from weatherapp.core.abstract.command import Command
 
 class Configure(Command):
     '''
@@ -20,7 +20,7 @@ class Configure(Command):
     def __init__(self, site_name):
         super().__init__(site_name)
         Configure.call += 1
-        logging.DEBUG('init Weather_settings', Configure.call)
+        logging.debug('init Weather_settings %s' % site_name)
         self.site_data = self.read_settings()
 
     def change_settings(self, current_location_url, curent_location,
@@ -125,16 +125,16 @@ class Configure(Command):
         print('The weather is {}'.format(cond), 'from ', site_name)
 
     @staticmethod
-    def display_temperege_data_per_hour(temperege_data):
+    def display_temperature_data_per_hour(temperature_data):
         '''
         :param temperege_data:
-        :return: min max average temperage to display
+        :return: min max average temperature to display
         '''
-        print('From {} min temperege = {}, max temperege = {}, '
-              'average temperege = {}'.format(temperege_data[0],
-                                              temperege_data[1],
-                                              temperege_data[2],
-                                              temperege_data[3]))
+        print('From {} min temperature = {}, max temperature = {}, '
+              'average temperature = {}'.format(temperature_data[0],
+                                              temperature_data[1],
+                                              temperature_data[2],
+                                              temperature_data[3]))
 
     def bs_body_processor(self):
         '''
@@ -149,7 +149,7 @@ class Configure(Command):
         self.display_data_weather(data_weather)
 
 
-class Cache_controller:
+class Cache_controller(Configure):
     '''
     response content and create cache file
     the main function is cache_chose. He return data from site or cache.
@@ -213,7 +213,7 @@ class Cache_controller:
         return site_data
 
     @staticmethod
-    def refresh_cache():
+    def refresh_cache(self):
         '''
         remove and refresh cache
         :return:
@@ -221,7 +221,7 @@ class Cache_controller:
         # remove_cache()
         for key in config.sites:  # переделать
             url = self.read_settings(key)
-            cache_chose(url)
+            self.cache_chose(url)
 
     @staticmethod
     def remove_cache():
@@ -253,7 +253,7 @@ class WeatherProvider(Configure):
     @abc.abstractmethod
     def parser(self):
         '''
-        :return: site_name, temprege, place, cond from site_name
+        :return: site_name, temperature, place, cond from site_name
         '''
 
     @abc.abstractmethod
@@ -263,8 +263,8 @@ class WeatherProvider(Configure):
         '''
 
     @abc.abstractmethod
-    def temperege_per_hour(self):
+    def temperature_per_hour(self):
         '''
         Data from site_name
-        :return: list[site_name, mit temperage, max temperage, average temperage]
+        :return: list[site_name, mit temperature, max temperature, average temperature]
         '''

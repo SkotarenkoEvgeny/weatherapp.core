@@ -20,7 +20,7 @@ class RP5Provider(Weather_settings):
 
     def parser(self):
         '''
-        :return: site_name, temprege, place, cond from rp5
+        :return: site_name, temperature, place, cond from rp5
         '''
         body = body = self.bs_body_processor()
         temprege = body.find('span', 't_0').text
@@ -47,9 +47,10 @@ class RP5Provider(Weather_settings):
         else:
             return {}
 
-    def temperege_per_hour(self):
+    def temperature_per_hour(self):
         '''
-        Data from accuweather.com
-        :return: list[site_name, mit temperage, max temperage, average temperage]
+        Data from rp5.com
+        :return: list[site_name, mit temperature, max temperature,
+        average temperature]
         '''
         pass

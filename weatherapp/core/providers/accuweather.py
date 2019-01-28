@@ -20,7 +20,7 @@ class AccuWeatherProvider(Weather_settings):
 
     def parser(self):
         '''
-        :return: site_name, temprege, place, cond from accuweather
+        :return: site_name, temperature, place, cond from accuweather
         '''
         body = self.bs_body_processor()
         temprege = body.find('span', 'large-temp').text
@@ -28,10 +28,11 @@ class AccuWeatherProvider(Weather_settings):
         cond = body.find('span', 'cond').text
         return (self.site_name, temprege, place, cond)
 
-    def temperege_per_hour(self):
+    def temperature_per_hour(self):
         '''
         Data from accuweather.com
-        :return: list[site_name, mit temperage, max temperage, average temperage]
+        :return: list[site_name, mit temperature, max temperature, average
+        temperature]
         '''
         body = self.bs_body_processor()
         temp = body.find(class_="hourly-table overview-hourly").table.tbody.tr
