@@ -4,7 +4,6 @@ import logging
 
 from weatherapp.core import config
 
-
 from weatherapp.core.providermanager import ProviderManager
 
 
@@ -18,22 +17,27 @@ class App:
                      1: logging.INFO,
                      2: logging.DEBUG}
 
-    def __init__(self):
+    def __init__(self, stdin = None , stdout = None, stderr = None):
+        self.stdin = stdin or sys.stdin
+        self.stdout = stdout or sys.stdout
+        self.stderr = stderr or sys.stderr
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
 
+
     def place_settings(self):
         '''
-        information adaut current settings
-        :return: info abaut change settings
+        information about current settings
+        :return: info about change settings
         '''
         flag = False
 
         for site_name in config.sites:
             print(
                 'The site {} have installed place {}'.format(site_name,
-                                                self.providermanager.get(
-                                                site_name).read_settings()[1]))
+                                                             self.providermanager.get(
+                                                                 site_name).read_settings()[
+                                                                 1]))
 
         while True:
             print('If you will change place for site - input "sitename"')
@@ -68,16 +72,17 @@ class App:
 
         return arg_parser
 
-    def configure_logging (self):
-        '''
+    def configure_logging(self):
+        """
         Create logging handlers for any log output
-        '''
+        """
         root_logger = logging.getLogger('')
         root_logger.setLevel(App.LOG_LEVEL_MAP[2])
 
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(App.LOG_LEVEL_MAP.get(self.options.verbose_level,
-                                                       App.LOG_LEVEL_MAP[0]))
+        console_handler.setLevel(
+            App.LOG_LEVEL_MAP.get(self.options.verbose_level,
+                                  App.LOG_LEVEL_MAP[0]))
 
         info_formater = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(funcName)s - %(message)s')
@@ -129,7 +134,8 @@ class App:
 
 """
 
-#import pdb; pdb.set_trace()
+
+# import pdb; pdb.set_trace()
 
 # python weatherapp.py -sitename rp5.ua
 # python weatherapp.py -sitename sinoptik.ua    #
@@ -166,4 +172,3 @@ def main(argv=sys.argv[1:]):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
