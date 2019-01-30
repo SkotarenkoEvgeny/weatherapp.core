@@ -23,10 +23,10 @@ class AccuWeatherProvider(Weather_settings):
         :return: site_name, temperature, place, cond from accuweather
         '''
         body = self.bs_body_processor()
-        temprege = body.find('span', 'large-temp').text
+        temperature = body.find('span', 'large-temp').text
         place = body.find('span', 'current-city').text
         cond = body.find('span', 'cond').text
-        return (self.site_name, temprege, place, cond)
+        return (self.site_name, temperature, place, cond)
 
     def temperature_per_hour(self):
         '''

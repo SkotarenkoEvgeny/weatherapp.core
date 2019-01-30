@@ -17,13 +17,12 @@ class App:
                      1: logging.INFO,
                      2: logging.DEBUG}
 
-    def __init__(self, stdin = None , stdout = None, stderr = None):
+    def __init__(self, stdin=None, stdout=None, stderr=None):
         self.stdin = stdin or sys.stdin
         self.stdout = stdout or sys.stdout
         self.stderr = stderr or sys.stderr
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
-
 
     def place_settings(self):
         '''
@@ -33,15 +32,15 @@ class App:
         flag = False
 
         for site_name in config.sites:
-            print(
-                'The site {} have installed place {}'.format(site_name,
+            self.stdout.write(
+                'The site {} have installed place {} \n'.format(site_name,
                                                              self.providermanager.get(
                                                                  site_name).read_settings()[
                                                                  1]))
 
         while True:
-            print('If you will change place for site - input "sitename"')
-            print('If you will exit? input "exit"')
+            self.stdout.write('If you will change place for site - input "sitename"')
+            self.stdout.write('If you will exit? input "exit"')
             site_name = input('If not need - input "No"')
             if site_name.lower() == 'no':
                 break
