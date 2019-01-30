@@ -8,9 +8,9 @@ from weatherapp.core.providermanager import ProviderManager
 
 
 class App:
-    '''
+    """
     WeatherApp agregator
-    '''
+    """
 
     logger = logging.getLogger(__name__)
     LOG_LEVEL_MAP = {0: logging.WARNING,
@@ -25,10 +25,10 @@ class App:
         self.providermanager = ProviderManager()
 
     def place_settings(self):
-        '''
+        """
         information about current settings
         :return: info about change settings
-        '''
+        """
         flag = False
 
         for site_name in config.sites:
@@ -55,9 +55,9 @@ class App:
         return flag
 
     def _arg_parse(self):
-        '''
+        """
         Initialize argument parser
-        '''
+        """
         arg_parser = ArgumentParser(add_help=False)
         arg_parser.add_argument('command', help='Command', nargs="?")
         arg_parser.add_argument('--refresh', help='Bypass caches',
@@ -147,9 +147,9 @@ class App:
 # python weatherapp.py -rf
 
 def main(argv=sys.argv[1:]):
-    '''
+    """
     Main entry point
-    '''
+    """
     try:
         site_chose = App()
         flag = site_chose.place_settings()

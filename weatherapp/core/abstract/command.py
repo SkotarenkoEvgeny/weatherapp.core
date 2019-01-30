@@ -3,7 +3,9 @@ import argparse
 
 
 class Command(abc.ABC):
-    '''Base class for commands'''
+    """
+    Base class for commands
+    """
 
     call = 0
 
@@ -17,6 +19,6 @@ class Command(abc.ABC):
 
     @abc.abstractmethod
     def run(self):
-        '''
+        """
         Invoiced by application when the command is run
-        '''
+        """
