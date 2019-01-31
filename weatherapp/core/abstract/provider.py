@@ -60,6 +60,9 @@ class Configure(Command):
             response = list()
             config = ConfigParser()
             config.read('settings.ini', encoding='utf8')
+            print(os.path.abspath('settings.ini'))
+            for t in config.items():
+                print("HHHHHHHH", t)
             for j in config.items(self.site_name):
                 response.append(j[1])
             return response
@@ -268,3 +271,7 @@ class WeatherProvider(Configure):
         Data from site_name
         :return: list[site_name, mit temperature, max temperature, average temperature]
         """
+
+f = Configure('accuweather.com')
+
+f.read_settings()

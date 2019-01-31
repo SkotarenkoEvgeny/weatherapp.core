@@ -5,6 +5,7 @@ import logging
 from weatherapp.core import config
 
 from weatherapp.core.providermanager import ProviderManager
+from weatherapp.core.formatters import TableFormatter
 
 
 class App:
@@ -23,6 +24,7 @@ class App:
         self.stderr = stderr or sys.stderr
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
+        self.formatters = self._load_formatter()
 
     def place_settings(self):
         """
@@ -59,15 +61,23 @@ class App:
         Initialize argument parser
         """
         arg_parser = ArgumentParser(add_help=False)
-        arg_parser.add_argument('command', help='Command', nargs="?")
-        arg_parser.add_argument('--refresh', help='Bypass caches',
+        arg_parser.add_argument('command',
+                                help='Command',
+                                nargs="?")
+        arg_parser.add_argument('--refresh',
+                                help='Bypass caches',
                                 action='store_true')
-        arg_parser.add_argument('--debug', action='store_true')
+        arg_parser.add_argument('--debug',
+                                action='store_true')
         arg_parser.add_argument('-v', '--verbose',
                                 action='count',
                                 dest='verbose_level',
                                 default=0,
                                 help='Increase verbosity of output.')
+        arg_parser.add_argument('-f', '--formatter',
+                                action='store',
+                                default='table',
+                                help="Output format, defaults to table")
 
         return arg_parser
 
@@ -89,6 +99,43 @@ class App:
         console_handler.setFormatter(info_formater)
 
         root_logger.addHandler(console_handler)
+
+
+    @staticmethod
+    def _load_formatter():
+        return {'table' : TableFormatter}
+
+    def produce_output(self, title, location, data):
+        """
+        Print results.
+        """
+
+        formatter = self.formatters.get(self.options.formatter, 'table')()
+        columns = [title, location]
+
+        self.stdout.write(formatter.emit(columns, data))
+        self.stdout.write('\n')
+
+    def run_provider(self, name, argv):
+        """ Run specified provider
+        """
+
+        provider = self.providermanager.get(name)
+        if provider:
+            provider = provider(self)
+            self.produce_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
+
+    def run_providers(self, argv):
+        """ Execute all available providers.
+        """
+
+        for name, provider in self.providermanager:
+            provider = provider(self)
+            self.produce_output(provider.title,
+                                provider.location,
+                                provider.run(argv))
 
     def run(self, argv):
 
