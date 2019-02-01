@@ -60,9 +60,10 @@ class Configure(Command):
             response = list()
             config = ConfigParser()
             config.read('settings.ini', encoding='utf8')
-            print(os.path.abspath('settings.ini'))
+            print("Patch to settings", os.path.abspath('settings.ini'))
+            print('Config sections - ', config.sections())
             for t in config.items():
-                print("HHHHHHHH", t)
+                print("Config items - ", t)
             for j in config.items(self.site_name):
                 response.append(j[1])
             return response
