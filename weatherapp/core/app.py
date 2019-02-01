@@ -5,7 +5,7 @@ import logging
 from weatherapp.core import config
 
 from weatherapp.core.providermanager import ProviderManager
-from weatherapp.core.formatters import TableFormatter
+from weatherapp.core.formatters import TableFormatter, CSV_Formatter
 
 
 class App:
@@ -76,7 +76,8 @@ class App:
                                 help='Increase verbosity of output.')
         arg_parser.add_argument('-f', '--formatter',
                                 action='store',
-                                default='table',
+                                nargs='*',
+                                default=['table'],
                                 help="Output format, defaults to table")
 
         return arg_parser
@@ -103,55 +104,54 @@ class App:
 
     @staticmethod
     def _load_formatter():
-        return {'table' : TableFormatter}
+        return {'table': TableFormatter, 'csv': CSV_Formatter}
 
-    def produce_output(self, title, location, data):
+    def produce_output(self, data):
         """
         Print results.
         """
-
-        formatter = self.formatters.get(self.options.formatter, 'table')()
-        columns = [title, location]
-
-        self.stdout.write(formatter.emit(columns, data))
+        formatter = self.formatters.get(self.options.formatter[0], 'table')()
+        self.stdout.write(formatter.emit(data))
         self.stdout.write('\n')
 
-    def run_provider(self, name, argv):
-        """ Run specified provider
+    def run_provider(self, name):
         """
-
+        Run specified provider
+        """
         provider = self.providermanager.get(name)
+        data = list()
         if provider:
-            provider = provider(self)
-            self.produce_output(provider.title,
-                                provider.location,
-                                provider.run(argv))
+            data.append(provider.data_for_table())
+            self.produce_output(data)
 
-    def run_providers(self, argv):
-        """ Execute all available providers.
+    def run_providers(self):
         """
+        Execute all available providers.
+        data for table = list(site_name, temperature, place, cond)
+        """
+        data = list()
+        for name, provider in self.providermanager._providers.items():
+            provider = provider.data_for_table()
+            data.append(provider)
+        self.produce_output(data)
 
-        for name, provider in self.providermanager:
-            provider = provider(self)
-            self.produce_output(provider.title,
-                                provider.location,
-                                provider.run(argv))
 
     def run(self, argv):
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
+        print(self.options)
         command_name = self.options.command
         self.configure_logging()
 
+
         if not command_name:
             # run all weather providers by default
-            for name, provider in self.providermanager._providers.items():
-                provider.run()
+            self.run_providers()
 
         elif command_name in self.providermanager:
             # run specific provider
-            provider = self.providermanager[command_name]
-            provider.run()
+            self.run_provider(command_name)
+
 
     def __del__(self):
         pass
