@@ -60,10 +60,6 @@ class Configure(Command):
             response = list()
             config = ConfigParser()
             config.read('settings.ini', encoding='utf8')
-            print("Patch to settings", os.path.abspath('settings.ini'))
-            print('Config sections - ', config.sections())
-            for t in config.items():
-                print("Config items - ", t)
             for j in config.items(self.site_name):
                 response.append(j[1])
             return response
@@ -125,9 +121,9 @@ class Configure(Command):
         """
         site_name, temperature, place, cond = data_weather[0], data_weather[1], \
                                               data_weather[2], data_weather[3]
-        sys.stdout.write('The temperature in {} is {}\n'.format(place, temperature), 'from ',
+        print('The temperature in {} is {}'.format(place, temperature), 'from ',
               site_name)
-        sys.stdout.write('The weather is {}\n'.format(cond), 'from ', site_name)
+        print('The weather is {}'.format(cond), 'from ', site_name)
 
     @staticmethod
     def display_temperature_data_per_hour(temperature_data):
@@ -141,6 +137,22 @@ class Configure(Command):
                                                 temperature_data[2],
                                                 temperature_data[3]))
 
+    @staticmethod
+    def table_data_creator(data_weather):
+        """
+        :param data_weather:
+        :return:
+        weather_info = {
+            'cond':        ''  # weather condition
+            'temp':        ''  # temperature
+        }
+        """
+        weather_info = {
+            'cond': data_weather[3],
+            'temp':data_weather[1],
+        }
+        return weather_info
+
     def bs_body_processor(self):
         """
         create data for BS
@@ -152,6 +164,12 @@ class Configure(Command):
     def run(self):
         data_weather = self.parser()
         self.display_data_weather(data_weather)
+
+    def data_for_table(self):
+        """
+        :return: data for table
+        """
+        return self.parser()
 
 
 class Cache_controller(Configure):
