@@ -18,8 +18,8 @@ class Configure(Command):
     """
     call = 0
 
-    def __init__(self, site_name):
-        super().__init__(site_name)
+    def __init__(self, site_name, app=None):
+        super().__init__(site_name, app)
         Configure.call += 1
         logging.debug('init Weather_settings %s' % site_name)
         self.site_data = self.read_settings()

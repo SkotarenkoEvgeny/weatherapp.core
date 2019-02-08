@@ -13,6 +13,6 @@ class Providers(Command):
     def providers():
         return Providers.sites
 
-    def run(self):
+    def run(self, argv):
         for name in Providers.sites:
             print(name)
