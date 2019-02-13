@@ -8,6 +8,7 @@ class Providers(Command):
     """
 
     sites = config.sites
+    name = "providers"
 
     @staticmethod
     def providers():

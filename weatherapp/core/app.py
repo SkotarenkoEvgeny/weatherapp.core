@@ -5,10 +5,7 @@ import logging
 from weatherapp.core import config
 
 from weatherapp.core.providermanager import ProviderManager
-<<<<<<< HEAD
-=======
 from weatherapp.core.commandmanager import CommandManager
->>>>>>> m05_ls14
 from weatherapp.core.formatters import TableFormatter, CSV_Formatter
 
 
@@ -29,10 +26,8 @@ class App:
         self.arg_parser = self._arg_parse()
         self.providermanager = ProviderManager()
         self.formatters = self._load_formatter()
-<<<<<<< HEAD
-=======
         self.commandmanager = CommandManager()
->>>>>>> m05_ls14
+
 
     def place_settings(self):
         """
