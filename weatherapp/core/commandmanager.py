@@ -28,6 +28,7 @@ class CommandManager(abstract.Manager):
         for command in [Configurate, Providers]:
             self.add(command.name, command)
 
+
     def get(self, name):
         """
         :param name: command name from argv

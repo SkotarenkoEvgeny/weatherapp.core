@@ -24,6 +24,7 @@ class Configure(Command):
         logging.debug('init Weather_settings %s' % site_name)
         self.site_data = self.read_settings()
 
+
     def change_settings(self, current_location_url, curent_location,
                         site_search=''):
         """
@@ -290,7 +291,3 @@ class WeatherProvider(Configure):
         Data from site_name
         :return: list[site_name, mit temperature, max temperature, average temperature]
         """
-
-f = Configure('accuweather.com')
-
-f.read_settings()
