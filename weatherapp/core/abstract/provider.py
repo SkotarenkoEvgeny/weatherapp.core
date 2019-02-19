@@ -4,7 +4,7 @@ import requests
 import time
 import hashlib
 import logging
-import re
+
 
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
@@ -18,14 +18,13 @@ class Configure(Command):
     read and change settings from settings file
     """
     call = 0
-    path = os.path.dirname(os.path.dirname(__file__)) #create path to settings
+    path = os.path.dirname(os.path.dirname(__file__))  # create path to settings
 
     def __init__(self, site_name, app=None):
         super().__init__(site_name, app)
         Configure.call += 1
         logging.debug('init Weather_settings %s' % site_name)
         self.site_data = self.read_settings()
-
 
     def change_settings(self, current_location_url, curent_location,
                         site_search=''):
@@ -38,7 +37,8 @@ class Configure(Command):
         :return:  save change site settings to settings.ini
         """
         config = ConfigParser()
-        config.read('settings.ini', encoding='utf8')
+        config.read(os.path.join(Configure.path, "settings.ini"),
+                    encoding='utf8')
         if self.site_name in config.sections():
             config.set(self.site_name, 'current_location_url',
                        current_location_url)
@@ -51,7 +51,8 @@ class Configure(Command):
                        current_location_url)
             config.set(self.site_name, 'current_location', curent_location)
             config.set(self.site_name, 'search', site_search)
-            with open('settings.ini', 'w', encoding='utf8') as config_file:
+            with open(os.path.join(Configure.path, "settings.ini"), 'w',
+                      encoding='utf8') as config_file:
                 config.write(config_file)
 
     def read_settings(self):
@@ -62,14 +63,17 @@ class Configure(Command):
         try:
             response = list()
             config = ConfigParser()
-            config.read(os.path.join(Configure.path, "settings.ini"), encoding='utf-8')
+            config.read(os.path.join(Configure.path, "settings.ini"),
+                        encoding='utf-8')
             for j in config.items(self.site_name):
                 response.append(j[1])
             return response
         except:
             logging.exception('The settings file is broken')
-            sys.stderr.write('The settings file is broken. Settings is will be rewrite.')
-            with open(os.path.join(Configure.path, 'default_settings.ini'), 'r') as default_file:
+            sys.stderr.write(
+                'The settings file is broken. Settings is will be rewrite.')
+            with open(os.path.join(Configure.path, 'default_settings.ini'),
+                      'r') as default_file:
                 with open('settings.ini', 'w') as file:
                     for line in default_file:
                         file.write(line)
@@ -135,10 +139,10 @@ class Configure(Command):
         :return: min max average temperature to display
         """
         sys.stdout.write('From {} min temperature = {}, max temperature = {}, '
-              'average temperature = {}'.format(temperature_data[0],
-                                                temperature_data[1],
-                                                temperature_data[2],
-                                                temperature_data[3]))
+                         'average temperature = {}'.format(temperature_data[0],
+                                                           temperature_data[1],
+                                                           temperature_data[2],
+                                                           temperature_data[3]))
 
     @staticmethod
     def table_data_creator(data_weather):
@@ -152,22 +156,9 @@ class Configure(Command):
         """
         weather_info = {
             'cond': data_weather[3],
-            'temp':data_weather[1],
+            'temp': data_weather[1],
         }
         return weather_info
-
-    @staticmethod
-    def path_converter(path, file_name):
-        """
-        :param path:
-        :param file_name:
-        :return:
-        changed path for python
-        """
-        bad_path = os.path.join(path, file_name)
-        good_path = os.path.normpath(bad_path)
-        return good_path
-
 
     def bs_body_processor(self):
         """
