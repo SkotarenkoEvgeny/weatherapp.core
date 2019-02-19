@@ -31,7 +31,6 @@ class AppTestCase(unittest.TestCase):
         Test application argparse.
         """
         test_parsed_args = self.test_app.arg_parser.parse_args(["accu"])
-        print(test_parsed_args)
         self.assertEqual(test_parsed_args.command, 'accu')
         self.assertIsNot(test_parsed_args, 'temp')
         self.assertFalse(test_parsed_args.debug, True)
