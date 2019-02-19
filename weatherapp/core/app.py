@@ -28,7 +28,6 @@ class App:
         self.formatters = self._load_formatter()
         self.commandmanager = CommandManager()
 
-
     def place_settings(self):
         """
         information about current settings
@@ -39,12 +38,13 @@ class App:
         for site_name in config.sites:
             self.stdout.write(
                 'The site {} have installed place {} \n'.format(site_name,
-                                                             self.providermanager.get(
-                                                                 site_name).read_settings()[
-                                                                 1]))
+                                                                self.providermanager.get(
+                                                                    site_name).read_settings()[
+                                                                    1]))
 
         while True:
-            self.stdout.write('If you will change place for site - input "sitename"')
+            self.stdout.write(
+                'If you will change place for site - input "sitename"')
             self.stdout.write('If you will exit? input "exit"')
             site_name = input('If not need - input "No"')
             if site_name.lower() == 'no':
@@ -104,7 +104,6 @@ class App:
 
         root_logger.addHandler(console_handler)
 
-
     @staticmethod
     def _load_formatter():
         return {'table': TableFormatter, 'csv': CSV_Formatter}
@@ -138,14 +137,12 @@ class App:
             data.append(provider)
         self.produce_output(data)
 
-
     def run(self, argv):
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         print(self.options)
         command_name = self.options.command
         self.configure_logging()
-
 
         if not command_name:
             # run all weather providers by default
@@ -154,7 +151,6 @@ class App:
         elif command_name in self.providermanager:
             # run specific provider
             self.run_provider(command_name)
-
 
     def __del__(self):
         pass
