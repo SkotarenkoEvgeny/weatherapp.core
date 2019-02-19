@@ -4,6 +4,7 @@ import requests
 import time
 import hashlib
 import logging
+import re
 
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
@@ -17,6 +18,7 @@ class Configure(Command):
     read and change settings from settings file
     """
     call = 0
+    path = os.path.dirname(os.path.dirname(__file__)) #create path to settings
 
     def __init__(self, site_name, app=None):
         super().__init__(site_name, app)
@@ -60,14 +62,14 @@ class Configure(Command):
         try:
             response = list()
             config = ConfigParser()
-            config.read('settings.ini', encoding='utf8')
+            config.read(os.path.join(Configure.path, "settings.ini"), encoding='utf-8')
             for j in config.items(self.site_name):
                 response.append(j[1])
             return response
         except:
             logging.exception('The settings file is broken')
             sys.stderr.write('The settings file is broken. Settings is will be rewrite.')
-            with open('default_settings.ini', 'r') as default_file:
+            with open(os.path.join(Configure.path, 'default_settings.ini'), 'r') as default_file:
                 with open('settings.ini', 'w') as file:
                     for line in default_file:
                         file.write(line)
@@ -153,6 +155,19 @@ class Configure(Command):
             'temp':data_weather[1],
         }
         return weather_info
+
+    @staticmethod
+    def path_converter(path, file_name):
+        """
+        :param path:
+        :param file_name:
+        :return:
+        changed path for python
+        """
+        bad_path = os.path.join(path, file_name)
+        good_path = os.path.normpath(bad_path)
+        return good_path
+
 
     def bs_body_processor(self):
         """

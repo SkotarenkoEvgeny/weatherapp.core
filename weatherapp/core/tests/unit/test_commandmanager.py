@@ -8,15 +8,12 @@ class DummyCommand:
 
 
 class CommandManagerTestCase(unittest.TestCase):
-
     """
     Unit test case for command manager.
     """
 
-
     def setUp(self):
         self.command_manager = CommandManager()
-
 
     def test_add(self):
         """
