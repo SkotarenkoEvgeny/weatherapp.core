@@ -31,12 +31,13 @@ class TableFormatter(Formatter):
         # pt.vrules = 0
         return self.pt.get_string()
 
+
 class CSV_Formatter(Formatter):
     """
     CSV formatter for app output.
     """
-    def emit(self, data):
 
+    def emit(self, data):
         with open("output.csv", "w", newline='', encoding='utf-8') as csv_file:
             for unit in data:
                 writer = csv.writer(csv_file, delimiter=',')

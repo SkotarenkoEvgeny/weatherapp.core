@@ -2,10 +2,9 @@ import abc
 
 
 class Formatter(abc.ABC):
-
-    """ Base abstract class for formatters.
     """
-
+    Base abstract class for formatters.
+    """
 
     @abc.abstractmethod
     def emit(self, data):
@@ -15,4 +14,3 @@ class Formatter(abc.ABC):
         :param stdout: output stream where data should be written
         :type stdout: sys.stdout or file like object
         """
-

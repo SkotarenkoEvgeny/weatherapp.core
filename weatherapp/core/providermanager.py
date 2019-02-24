@@ -1,5 +1,6 @@
 from weatherapp.core.providers import RP5Provider, AccuWeatherProvider
 
+
 class ProviderManager:
     """
     Discovers registered providers and load them
@@ -18,7 +19,6 @@ class ProviderManager:
         for provider in [AccuWeatherProvider, RP5Provider]:
             provider = provider()
             self.add(provider.site_name, provider)
-
 
     def add(self, name, provider):
         """

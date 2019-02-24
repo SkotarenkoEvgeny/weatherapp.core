@@ -1,8 +1,8 @@
 from weatherapp.core.abstract import Command
 from weatherapp.core import config
 
-class Providers(Command):
 
+class Providers(Command):
     """
     Print all available providers.
     """

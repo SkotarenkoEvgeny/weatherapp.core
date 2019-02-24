@@ -5,7 +5,6 @@ import time
 import hashlib
 import logging
 
-
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
 
@@ -43,7 +42,8 @@ class Configure(Command):
             config.set(self.site_name, 'current_location_url',
                        current_location_url)
             config.set(self.site_name, 'current_location', curent_location)
-            with open('settings.ini', 'w', encoding='utf8') as config_file:
+            with open(os.path.join(Configure.path, "settings.ini"), 'w',
+                      encoding='utf8') as config_file:
                 config.write(config_file)
         else:
             config.add_section(self.site_name)
@@ -74,7 +74,8 @@ class Configure(Command):
                 'The settings file is broken. Settings is will be rewrite.')
             with open(os.path.join(Configure.path, 'default_settings.ini'),
                       'r') as default_file:
-                with open('settings.ini', 'w') as file:
+                with open(os.path.join(Configure.path, "settings.ini"),
+                          'w') as file:
                     for line in default_file:
                         file.write(line)
             return self.read_settings()
@@ -184,14 +185,15 @@ class Cache_controller(Configure):
     response content and create cache file
     the main function is cache_chose. He return data from site or cache.
     refresh cache - refresh data in cache
-    remove cache - delete cahe data
+    remove cache - delete cache data
     """
 
-    def __init__(self, url):
+    def __init__(self, url=None):
         self.url = url
-        self.cache_file_name = os.path.join('Cache_folder/',
-                                            hashlib.md5(url.encode(
-                                                'utf-8')).hexdigest() + '.txt')
+        self.cache_file_name = os.path.join(config.base_path, 'Cache_folder/',
+                                            hashlib.md5(
+                                                url.encode('utf-8')).hexdigest()
+                                            + '.txt')
 
     def site_request(self):
         """
@@ -199,13 +201,13 @@ class Cache_controller(Configure):
         :return: data from site
         """
         headers = config.headers
-        response = requests.get(self.url, headers=headers)
         try:
+            response = requests.get(self.url, headers=headers)
             if response.status_code != 200:
                 return None
             return response.content
-        except requests.exceptions.RequestException:
-            logging.exception('Site response ', response.status_code)
+        except Exception as exc:
+            logging.exception('Site response ', exc)
             return None
 
     def cache_chose(self):
@@ -213,23 +215,25 @@ class Cache_controller(Configure):
         chose create or reed cache
         :return: cache_data
         """
-        if 'Cache_folder' not in os.listdir():
+        if 'Cache_folder' not in os.listdir(config.base_path):
             os.mkdir('Cache_folder')
-        # file_name = self.cache_file_name
-        web_data = self.site_request()
-        if web_data == None:
-            raw_data = self.read_cache()
-            logging.debug('Old Data from file')
-        elif os.path.exists(self.cache_file_name) and time.time() \
-                - os.stat(self.cache_file_name).st_mtime < 60:
+        if os.path.exists(self.cache_file_name) == True and time.time() \
+                - os.stat(self.cache_file_name).st_mtime < 20:
             raw_data = self.read_cache()
             logging.debug('Data from file')
         else:
-            self.write_cache(web_data)
-            raw_data = self.read_cache()
-            logging.debug('Data from site')
+            web_data = self.site_request()
+            if web_data == None:
+                raw_data = self.read_cache()
+                logging.debug('Old Data from file')
+            else:
+                self.write_cache(web_data)
+                raw_data = self.read_cache()
+                logging.debug('Data from site')
+        # if os.path.exists(self.cache_file_name) == True:
+        #
+
         site_data = raw_data
-        # site_data = BS_converter(raw_data)
         return site_data
 
     def read_cache(self):
@@ -243,15 +247,17 @@ class Cache_controller(Configure):
         return site_data
 
     @staticmethod
-    def refresh_cache(self):
+    def refresh_cache():
         """
         remove and refresh cache
         :return:
         """
-        # remove_cache()
-        for key in config.sites:  # переделать
-            url = self.read_settings(key)
-            self.cache_chose(url)
+        Cache_controller.remove_cache()
+        for key in config.sites:
+            site = Configure(key)
+            site_data = site.read_settings()
+            refresh_site = Cache_controller(site_data[0])
+            refresh_site.cache_chose()
 
     @staticmethod
     def remove_cache():
@@ -259,8 +265,9 @@ class Cache_controller(Configure):
         remove and refresh cache
         :return:
         """
-        for file in os.listdir('Cache_folder'):
-            os.remove(os.path.join('Cache_folder', file))
+        path = os.path.normpath(os.path.join(config.base_path, 'Cache_folder'))
+        for file in os.listdir(path):
+            os.remove(os.path.join(path, file))
 
     def write_cache(self, web_data):
         """
@@ -297,3 +304,6 @@ class WeatherProvider(Configure):
         Data from site_name
         :return: list[site_name, mit temperature, max temperature, average temperature]
         """
+
+
+Cache_controller.refresh_cache()

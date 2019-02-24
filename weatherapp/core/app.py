@@ -67,7 +67,7 @@ class App:
         arg_parser.add_argument('command',
                                 help='Command',
                                 nargs="?")
-        arg_parser.add_argument('--refresh',
+        arg_parser.add_argument('-r', '--refresh',
                                 help='Bypass caches',
                                 action='store_true')
         arg_parser.add_argument('--debug',
@@ -140,7 +140,6 @@ class App:
     def run(self, argv):
 
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
-        print(self.options)
         command_name = self.options.command
         self.configure_logging()
 
@@ -151,6 +150,8 @@ class App:
         elif command_name in self.providermanager:
             # run specific provider
             self.run_provider(command_name)
+
+
 
     def __del__(self):
         pass

@@ -17,7 +17,6 @@ class AccuWeatherProvider(Weather_settings):
         super().__init__(self.site_name)
         self.site_data = Weather_settings.read_settings(self)
 
-
     def parser(self):
         '''
         :return: site_name, temperature, place, cond from accuweather
@@ -54,4 +53,3 @@ class AccuWeatherProvider(Weather_settings):
         for info in data_links:
             list_links[str(info.find('a').em.text)] = info.find('a')['href']
         return list_links
-

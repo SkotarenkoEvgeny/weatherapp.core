@@ -17,7 +17,6 @@ class RP5Provider(Weather_settings):
         super().__init__(self.site_name)
         self.site_data = Weather_settings.read_settings(self)
 
-
     def parser(self):
         '''
         :return: site_name, temperature, place, cond from rp5
@@ -25,7 +24,7 @@ class RP5Provider(Weather_settings):
         body = body = self.bs_body_processor()
         temprege = body.find('span', 't_0').text
         place = body.find('div', {'id': 'pointNavi'}).text
-        cond = body.find(id='forecastShort-content').find(class_='second-part')\
+        cond = body.find(id='forecastShort-content').find(class_='second-part') \
                    .previous.lstrip(' ')[:-2]
         return (self.site_name, temprege, place, cond)
 

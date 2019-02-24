@@ -12,6 +12,7 @@ from weatherapp.core.providermanager import ProviderManager
 from weatherapp.core.commandmanager import CommandManager
 from weatherapp.core.formatters import TableFormatter, CSV_Formatter
 
+
 class AppTestCase(unittest.TestCase):
     """
     test for App
@@ -42,7 +43,6 @@ class AppTestCase(unittest.TestCase):
 
         formatter = {'table': TableFormatter, 'csv': CSV_Formatter}
         self.assertDictEqual(formatter, self.test_app._load_formatter())
-
 
 
 if __name__ == '__main__':
