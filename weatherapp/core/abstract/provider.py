@@ -252,6 +252,7 @@ class Cache_controller(Configure):
         remove and refresh cache
         :return:
         """
+        print("refresh cache")
         Cache_controller.remove_cache()
         for key in config.sites:
             site = Configure(key)
@@ -304,6 +305,3 @@ class WeatherProvider(Configure):
         Data from site_name
         :return: list[site_name, mit temperature, max temperature, average temperature]
         """
-
-
-Cache_controller.refresh_cache()

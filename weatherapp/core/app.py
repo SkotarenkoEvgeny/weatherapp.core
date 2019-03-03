@@ -7,13 +7,12 @@ from weatherapp.core import config
 from weatherapp.core.providermanager import ProviderManager
 from weatherapp.core.commandmanager import CommandManager
 from weatherapp.core.formatters import TableFormatter, CSV_Formatter
-
+from weatherapp.core.abstract.provider import Cache_controller
 
 class App:
     """
     WeatherApp agregator
     """
-
     logger = logging.getLogger(__name__)
     LOG_LEVEL_MAP = {0: logging.WARNING,
                      1: logging.INFO,
@@ -82,7 +81,6 @@ class App:
                                 nargs='*',
                                 default=['table'],
                                 help="Output format, defaults to table")
-
         return arg_parser
 
     def configure_logging(self):
@@ -90,8 +88,7 @@ class App:
         Create logging handlers for any log output
         """
         root_logger = logging.getLogger('')
-        root_logger.setLevel(App.LOG_LEVEL_MAP[2])
-
+        root_logger.setLevel(App.LOG_LEVEL_MAP[0])
         console_handler = logging.StreamHandler()
         console_handler.setLevel(
             App.LOG_LEVEL_MAP.get(self.options.verbose_level,
@@ -116,6 +113,20 @@ class App:
         self.stdout.write(formatter.emit(data))
         self.stdout.write('\n')
 
+    def run_command(self, name, argv):
+        """
+        Run command
+        """
+        command = self.commandmanager.get(name)
+        try:
+            command(self).run(argv)
+        except Exception:
+            msg = "Error during command: %s run"
+            if self.options.debug:
+                self.logger.exception(msg, name)
+            else:
+                self.logger.error(msg, name)
+
     def run_provider(self, name):
         """
         Run specified provider
@@ -138,60 +149,31 @@ class App:
         self.produce_output(data)
 
     def run(self, argv):
-
+        print('1', self.arg_parser.parse_args())
+        print(self.arg_parser.parse_known_args(argv))
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command
+
         self.configure_logging()
+
+        if self.options.refresh == True:
+            Cache_controller.refresh_cache()
 
         if not command_name:
             # run all weather providers by default
             self.run_providers()
 
-        elif command_name in self.providermanager:
+        if command_name in self.providermanager:
+            # run specific provider
+            self.run_command(command_name, remaining_args)
+
+        if command_name in self.commandmanager:
             # run specific provider
             self.run_provider(command_name)
-
-
 
     def __del__(self):
         pass
 
-
-"""
-    parser = argparse.ArgumentParser(description='returt weather information from chosen site')
-    parser.add_argument('-rf', '--refresh', action='store_true', help='Refresh cach file')
-    parser.add_argument('-rm', '--remove', action='store_true', help='Clear cach file')
-    parser.add_argument('-sitename', help=str(site_functions.keys()), nargs=1, type=str)
-    parser.add_argument('-temp_hour', help='Temprege per hour', nargs=1, type=str)
-    parser.add_argument('-s', '--save', help='Save data from {sitename} to file', nargs=1, type=str)
-    args = parser.parse_args()
-
-    if args.sitename != None:
-        display_data_weather(site_functions[args.sitename[0]]())
-    if args.temp_hour != None:
-        display_temperege_data_per_hour(temprege_per_hour[args.temp_hour[0]]())
-    if args.save != None:
-        save_data_to_file(site_functions[args.save[0]]())
-    if args.refresh != False:
-        refresh_cache()
-    if args.remove != False:
-        remove_cache()
-
-
-"""
-
-
-# import pdb; pdb.set_trace()
-
-# python weatherapp.py -sitename rp5.ua
-# python weatherapp.py -sitename sinoptik.ua    #
-# python weatherapp.py -temp_hour accuweather.com
-# python weatherapp.py -sitename accuweather.com
-
-# python weatherapp.py -s accuweather.com
-# python weatherapp.py --save rp5.ua
-# python weatherapp.py -rm
-# python weatherapp.py -rf
 
 def main(argv=sys.argv[1:]):
     """

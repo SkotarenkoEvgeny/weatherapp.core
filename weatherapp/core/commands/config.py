@@ -2,7 +2,8 @@ from weatherapp.core.abstract import Command
 
 
 class Configurate(Command):
-    """ Help to configure weather providers.
+    """
+    Help to configure weather providers.
     """
 
     name = 'configurate'
