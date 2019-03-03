@@ -6,7 +6,7 @@ from weatherapp.core import config
 
 from weatherapp.core.providermanager import ProviderManager
 from weatherapp.core.commandmanager import CommandManager
-from weatherapp.core.formatters import TableFormatter, CSV_Formatter
+from weatherapp.core.formatters import TableFormatter, CSV_Formatter, TXT_Formatter
 from weatherapp.core.abstract.provider import Cache_controller
 
 class App:
@@ -103,7 +103,7 @@ class App:
 
     @staticmethod
     def _load_formatter():
-        return {'table': TableFormatter, 'csv': CSV_Formatter}
+        return {'table': TableFormatter, 'csv': CSV_Formatter, 'txt': TXT_Formatter}
 
     def produce_output(self, data):
         """
@@ -149,7 +149,6 @@ class App:
         self.produce_output(data)
 
     def run(self, argv):
-        print('1', self.arg_parser.parse_args())
         print(self.arg_parser.parse_known_args(argv))
         self.options, remaining_args = self.arg_parser.parse_known_args(argv)
         command_name = self.options.command

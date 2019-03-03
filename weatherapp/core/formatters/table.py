@@ -43,3 +43,13 @@ class CSV_Formatter(Formatter):
                 writer = csv.writer(csv_file, delimiter=',')
                 writer.writerow(unit)
         return 'csv file is written'
+
+class TXT_Formatter(Formatter):
+    """
+    TXT formattrer for app output.
+    """
+    def emit(self, data):
+        with open("output.txt", "w", newline='', encoding='utf-8') as txt_file:
+            for unit in data:
+                txt_file.write(str(unit) + '\n')
+        return 'txt file is written'
