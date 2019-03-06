@@ -9,10 +9,12 @@ The command for management:
     'command',
 
     '-r', '--refresh',
-
+        refresh data in cache
     '--debug',
-
+        set debug level ( WARNING, -v INFO, -vv Debug)
     '-v', '--verbose',
 
     '-f', '--formatter',
-    wfapp -f csv
+        table, csv data to file, txt data to file
+    '-time',
+        change time for using data from cache

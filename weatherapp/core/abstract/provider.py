@@ -217,8 +217,12 @@ class Cache_controller(Configure):
         """
         if 'Cache_folder' not in os.listdir(config.base_path):
             os.mkdir('Cache_folder')
+        config_time = ConfigParser()
+        config_time.read(os.path.join(Configure.path, "settings.ini"),
+                    encoding='utf8')
         if os.path.exists(self.cache_file_name) == True and time.time() \
-                - os.stat(self.cache_file_name).st_mtime < 20:
+                - os.stat(self.cache_file_name).st_mtime < \
+                int(config_time.items('cache_data')[0][1]):
             raw_data = self.read_cache()
             logging.debug('Data from file')
         else:
@@ -245,6 +249,17 @@ class Cache_controller(Configure):
         with open(self.cache_file_name, 'r', encoding='utf-8') as f:
             site_data = f.read()
         return site_data
+
+    @staticmethod
+    def change_time_cache(time):
+        config = ConfigParser()
+        config.read(os.path.join(Configure.path, "settings.ini"),
+                    encoding='utf8')
+        time = str(time)
+        config.set('cache_data', 'cache_time', time)
+        with open(os.path.join(Configure.path, "settings.ini"), 'w',
+                  encoding='utf8') as config_file:
+            config.write(config_file)
 
     @staticmethod
     def refresh_cache():

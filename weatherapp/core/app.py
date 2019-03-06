@@ -81,6 +81,9 @@ class App:
                                 nargs='*',
                                 default=['table'],
                                 help="Output format, defaults to table")
+        arg_parser.add_argument('-time',
+                                action='store',
+                                help="Change time cache")
         return arg_parser
 
     def configure_logging(self):
@@ -158,17 +161,20 @@ class App:
         if self.options.refresh == True:
             Cache_controller.refresh_cache()
 
+        if self.options.time != None and self.options.time.isnumeric() == True:
+            Cache_controller.change_time_cache(self.options.time)
+
         if not command_name:
             # run all weather providers by default
             self.run_providers()
 
         if command_name in self.providermanager:
             # run specific provider
-            self.run_command(command_name, remaining_args)
+            self.run_provider(command_name)
 
         if command_name in self.commandmanager:
             # run specific provider
-            self.run_provider(command_name)
+            self.run_command(command_name, remaining_args)
 
     def __del__(self):
         pass
